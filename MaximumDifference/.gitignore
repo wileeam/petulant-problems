@@ -1,0 +1,17 @@
+# Created by http://www.gitignore.io
+
+### TextMate ###
+*.tmproj
+*.tmproject
+tmtags
+
+### Java ###
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
