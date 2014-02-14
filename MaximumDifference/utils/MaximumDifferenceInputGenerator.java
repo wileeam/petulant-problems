@@ -17,7 +17,6 @@ class MaximumDifferenceInputGenerator {
 		// The problem limits...
 		int min_array_size = 2;
 		int max_array_size = 1000000;
-		max_array_size = 17;
 		
 		int lower_bound = -1000;
 		int upper_bound = 1000;

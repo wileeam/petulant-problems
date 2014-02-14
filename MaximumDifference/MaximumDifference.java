@@ -39,16 +39,16 @@ class MaximumDifference {
 	
 	public static void main( String args[] ) {
 
+		// Control variable for debugging
+		boolean VERBOSE = false;
+
+		// Variable where to save the input
 		Vector<Integer> numberSequence = new Vector<Integer>();
 
-		int min_best;
-		int min_begin;
-		int min_end;
-
-		int max_best;
-		int max_begin;
-		int max_end;
-
+		// Variables tracking the best result for each subsequence so far
+		Vector<Integer> left_best_subsequence = new Vector<Integer>();
+		Vector<Integer> right_best_subsequence = new Vector<Integer>();
+		
 		// Set up IO system
 		Kattio io = new Kattio( System.in, System.out );
 
@@ -57,15 +57,20 @@ class MaximumDifference {
 			int number = io.getInt();
 			numberSequence.add(number);
 		}
-		io.println( "Sequence: " + numberSequence );
-
-		// Prepare the tracking variables...
-		min_best = numberSequence.get(0).intValue();
-		max_best = min_best;
-		min_begin = 0;
-		min_end = 0;
-		max_begin = 0;
-		max_end = 0;
+		
+		if (VERBOSE) {
+			io.println( "Sequence: " + numberSequence );
+		}
+		
+		// Prepare tracking variables
+		// For the left subsequence, the first best sum is just the first number in the input sequence (indexes don't matter)
+		left_best_subsequence.add(numberSequence.get(0));
+		left_best_subsequence.add(0);
+		left_best_subsequence.add(0);
+		// For the right subsequence, the first best sum is just the last number in the input sequence (indexes don't matter)
+		right_best_subsequence.add(numberSequence.get(numberSequence.size()-1));
+		right_best_subsequence.add(numberSequence.size()-1);
+		right_best_subsequence.add(numberSequence.size()-1);
 
 		// Naive approach: find all the max and min sums in the given sequence
 		for ( int i = 1; i < numberSequence.size(); i++) {
@@ -79,23 +84,48 @@ class MaximumDifference {
 			// Right part -> Calculate the max sum with Kadane's algorithm
 			Vector<Integer> right_subsequence = getMaxSum( numberSequence.subList( i, numberSequence.size() ) );
 			
+			// Now check whether the current subsequences are any better than what we already have
+			if ( left_subsequence.get(0).compareTo( left_best_subsequence.get(0) ) < 0 ) {
+				left_best_subsequence = left_subsequence;
+			}
+			if ( right_subsequence.get(0).compareTo( right_best_subsequence.get(0) ) > 0 ) {
+				right_best_subsequence = right_subsequence;
+			}
 			
-			io.println( i
-				+ ".\tCurrent results - Min: "
-				+ left_subsequence.get(0)
-				+ " :: "
-				+ numberSequence.subList( 0, i ).subList(left_subsequence.get(1), left_subsequence.get(2)+1)
-			);
-			io.println( "\tCurrent results - Max: "
-				+ right_subsequence.get(0)
-				+ " :: "
-				+ numberSequence.subList( i, numberSequence.size() ).subList(right_subsequence.get(1), right_subsequence.get(2)+1)
-			);
-			io.println( "\tCurrent difference: "
-				+ (right_subsequence.get(0)-left_subsequence.get(0))
-			);
-			
+			if (VERBOSE) {
+				io.println( i
+					+ ".\tCurrent results - Min: "
+					+ left_subsequence.get(0)
+					+ " :: "
+					+ numberSequence.subList( 0, i ).subList(left_subsequence.get(1), left_subsequence.get(2)+1)
+				);
+				io.println( "\tCurrent results - Max: "
+					+ right_subsequence.get(0)
+					+ " :: "
+					+ numberSequence.subList( i, numberSequence.size() ).subList(right_subsequence.get(1), right_subsequence.get(2)+1)
+				);
+				io.println( "\tCurrent difference: "
+					+ (right_subsequence.get(0)-left_subsequence.get(0))
+				);
+			}
 		}
+
+		if (VERBOSE) {
+			io.println();
+			io.println("\tMin: "
+				+ left_best_subsequence.get(0)
+				+ " :: "
+				+ numberSequence.subList(left_best_subsequence.get(1), left_best_subsequence.get(2)+1)
+			);
+			io.println("\tMax: "
+				+ right_best_subsequence.get(0)
+				+ " :: "
+				+ numberSequence.subList(right_best_subsequence.get(1), right_best_subsequence.get(2)+1)
+			);
+		}
+		
+		// Output maximal difference...
+		io.println(right_best_subsequence.get(0)-left_best_subsequence.get(0));
 
 		io.close();
 
