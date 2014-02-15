@@ -74,7 +74,6 @@ class MaximumDifference {
 
 		// Naive approach: find all the max and min sums in the given sequence
 		for ( int i = 1; i < numberSequence.size(); i++) {
-
 			// Use i as pivot to divide numberSequence and calculate min and max
 			// on each side respectively
 
@@ -133,40 +132,18 @@ class MaximumDifference {
 
 
 	public static Vector<Integer> getMinSum( List<Integer> list ) {
-		return getMaxMinSum( list, true );
-	} // getMinSum()
-	
-	public static Vector<Integer> getMaxSum( List<Integer> list ) {
-		return getMaxMinSum( list, false );
-	} // getMaxSum()
-	
-	public static Vector<Integer> getMaxMinSum( List<Integer> list, boolean doMinSum ) {
 
 		// Variables initialization
-		int max_so_far  = list.get(0).intValue();
-		int max_ending_here = max_so_far;
-
 		int min_so_far = -list.get(0).intValue();
 		int min_ending_here = min_so_far;
 
 		// Tracking variables initialization
-		int max_begin = 0;
-		int max_begin_temp = 0;
-		int max_end = 0;
-
 		int min_begin = 0;
 		int min_begin_temp = 0;
 		int min_end = 0;
 
 		// Find sequence by looping through
 		for( int i = 1; i < list.size(); i++) {
-			// calculate max_ending_here
-			if ( max_ending_here < 0 ) {
-				max_ending_here = list.get(i).intValue();
-				max_begin_temp = i;
-			} else {
-				max_ending_here += list.get(i).intValue();
-			}
 			// calculate min_ending_here
 			if ( min_ending_here < 0 ) {
 				min_ending_here = -list.get(i).intValue();
@@ -175,12 +152,6 @@ class MaximumDifference {
 				min_ending_here += -list.get(i).intValue();
 			}
 
-			// calculate max_so_far
-			if ( max_ending_here >= max_so_far ) {
-				max_so_far  = max_ending_here;
-				max_begin = max_begin_temp;
-				max_end = i;
-			}
 			// calculate min_so_far
 			if ( min_ending_here >= min_so_far ) {
 				min_so_far = min_ending_here;
@@ -191,19 +162,52 @@ class MaximumDifference {
 
 		// Create and fill vector with results
 		Vector<Integer> result = new Vector<Integer>();
-		
-		if ( doMinSum ) {
-			result.add(-min_so_far);
-			result.add(min_begin);
-			result.add(min_end);
-		} else {
-			result.add(max_so_far);
-			result.add(max_begin);
-			result.add(max_end);
-		}
+		result.add(-min_so_far);
+		result.add(min_begin);
+		result.add(min_end);
 		
 		return result;
 
-	} // getMaxMinSum()
+	} // getMinSum()
+	
+	public static Vector<Integer> getMaxSum( List<Integer> list ) {
+
+		// Variables initialization
+		int max_so_far  = list.get(0).intValue();
+		int max_ending_here = max_so_far;
+
+		// Tracking variables initialization
+		int max_begin = 0;
+		int max_begin_temp = 0;
+		int max_end = 0;
+
+		// Find sequence by looping through
+		for( int i = 1; i < list.size(); i++) {
+			// calculate max_ending_here
+			if ( max_ending_here < 0 ) {
+				max_ending_here = list.get(i).intValue();
+				max_begin_temp = i;
+			} else {
+				max_ending_here += list.get(i).intValue();
+			}
+
+			// calculate max_so_far
+			if ( max_ending_here >= max_so_far ) {
+				max_so_far  = max_ending_here;
+				max_begin = max_begin_temp;
+				max_end = i;
+			}
+		}
+
+		// Create and fill vector with results
+		Vector<Integer> result = new Vector<Integer>();
+		result.add(max_so_far);
+		result.add(max_begin);
+		result.add(max_end);
+		
+		return result;
+
+	} // getMaxSum()
 
 } // MaximumDifference{}
+

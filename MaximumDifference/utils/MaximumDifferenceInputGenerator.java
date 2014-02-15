@@ -9,6 +9,7 @@ class MaximumDifferenceInputGenerator {
 
 	public static void main( String args[] ) {
 
+		// Set up IO system
 		Kattio io = new Kattio(System.in, System.out);
 
 		// Hopefully you are sufficiently random...
@@ -17,6 +18,10 @@ class MaximumDifferenceInputGenerator {
 		// The problem limits...
 		int min_array_size = 2;
 		int max_array_size = 1000000;
+		// Used for debugging if the maximum size of the generated array is to be limited
+		if ( args.length == 1 && Integer.parseInt(args[0]) > 2 ) {
+			max_array_size = Integer.parseInt(args[0]);
+		}
 		
 		int lower_bound = -1000;
 		int upper_bound = 1000;
