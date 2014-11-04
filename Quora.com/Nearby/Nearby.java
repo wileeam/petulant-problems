@@ -1,3 +1,23 @@
+/*
+ *
+ * Solution to Quora's 'Nearby' problem
+ *
+ * Copyright (C) 2014  Guillermo Rodríguez Cano
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import java.io.*;
 
 import java.util.ArrayList;
@@ -11,7 +31,7 @@ import java.util.Iterator;
 
 
 /*
- * Nearby problem constraints
+ * Problem constraints
  *
  * Topic    T        : 1 <= T <= 10000
  * Question Q        : 1 <= Q <= 1000
@@ -26,20 +46,19 @@ import java.util.Iterator;
  */
 
 // TODO: Clean up
-// TODO: Test with corner cases (specially non-existant ids; ie, 0)
 // TODO; Document properly
 
 public class Nearby {
 	
 	public static void main( String args[] ) throws Exception {
 		
-		// Variables where to save the input
-		Grid planeGrid = new Grid();
-		
 		// Set up IO system
 		BufferedReader br = new BufferedReader( new InputStreamReader( System.in ) );
-
-		// Parameter settings set up
+		
+		// 2D plane grid represeting the space of topics and questions
+		Grid planeGrid = new Grid();
+		
+		// Main parameters set up
 		String[] parameters = br.readLine().split("\\s");
 		Integer t = Integer.valueOf(parameters[0]);
 		Integer q = Integer.valueOf(parameters[1]);
@@ -57,13 +76,16 @@ public class Nearby {
 		// Questions set up
 		for (int j = 0; j < q; j++ ) {
 			String[] question = br.readLine().split("\\s");
-			Integer[] topicsForQuestion = new Integer[question.length - 1];
-			for (int jj = 0; jj < question.length - 1; jj++) {
-				topicsForQuestion[jj] = Integer.valueOf(question[jj+1]);
+			Integer questionSize = Integer.valueOf( question[1] );
+			if ( questionSize > 0 ) {
+				Integer[] topicsForQuestion = new Integer[questionSize];
+				for (int jj = 0; jj < questionSize ; jj++) {
+					topicsForQuestion[jj] = Integer.valueOf(question[jj + 2]);
+				}
+				planeGrid.addQuestion( Integer.valueOf(question[0]),
+									   topicsForQuestion
+									 );
 			}
-			planeGrid.addQuestion( Integer.valueOf(question[0]),
-								   topicsForQuestion
-								 );
 		}
 		
 		// Queries set up, execution and output
@@ -89,7 +111,6 @@ public class Nearby {
 				
 				ArrayList<Map.Entry<Topic, Double>> sortedTopics = sortTopicsByDistance( resultTopics );
 				for (int i = 0; i < Math.min( sortedTopics.size(), queryResults) ; i++) {
-					//System.out.println( sortedTopics.get(i).getKey() + " - " + sortedTopics.get(i).getValue());
 					System.out.print( sortedTopics.get(i).getKey().getId() );
 					System.out.print( " " );
 				}
@@ -99,7 +120,6 @@ public class Nearby {
 				HashMap<Integer, Double> resultQuestions = planeGrid.getNearbyQuestions( queryXCoordinate, queryYCoordinate, queryResults );
 				ArrayList<Map.Entry<Integer, Double>> sortedQuestions = sortQuestionsByDistance( resultQuestions );
 				for (int i = 0; i < Math.min( sortedQuestions.size(), queryResults ); i++) {
-					//System.out.println( sortedQuestions.get(i).getKey() + " - " + sortedQuestions.get(i).getValue());
 					System.out.print( sortedQuestions.get(i).getKey() );
 					System.out.print( " " );
 				}
@@ -144,6 +164,7 @@ public class Nearby {
 		
 	}
 	
+	// TODO: Find a way to merge the logic with the previous function...
 	public static ArrayList<Map.Entry<Integer, Double>> sortQuestionsByDistance( HashMap<Integer, Double> unsortedMap ) {
 		
 		// First convert the map to a list
@@ -238,7 +259,7 @@ class Grid {
 		
 		this.topicsList = new HashMap<Integer, Topic>();
 		
-		// Subgrid size 20000 x 20000 (allocating 4 topics in average)		
+		// Subgrid size 20000 x 20000 (allocating 4 topics in average)
 		this.subGridLength = 20000;
 		this.maxGridLength = 1000000;
 		
@@ -276,11 +297,6 @@ class Grid {
 	}
 	
 	public boolean addQuestion( Integer id, Integer[] topics ) {
-		
-		// Check that the there are no topics associated with the question
-		if ( topics.length == 1 && topics[0] == 0 ) {
-			return false;
-		}
 		
 		// Now... a simple thing, create the question and add it to each topic
 		for ( int i = 0; i < topics.length; i++ ) {
